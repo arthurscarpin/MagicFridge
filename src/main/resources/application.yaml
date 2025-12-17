@@ -18,3 +18,8 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+  # OpenAI Configuration
+  chatgpt:
+    api:
+      url: https://api.openai.com/v1/responses
+      key: ${API_KEY}
