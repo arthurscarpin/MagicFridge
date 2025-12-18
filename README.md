@@ -1,3 +1,5 @@
+# MagicFridge
+
 ```bash
 # Build Image
 docker build -t magicfridge .
