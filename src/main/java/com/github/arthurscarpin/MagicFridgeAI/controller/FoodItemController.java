@@ -1,6 +1,7 @@
 package com.github.arthurscarpin.MagicFridgeAI.controller;
 
-import com.github.arthurscarpin.MagicFridgeAI.model.FoodItem;
+import com.github.arthurscarpin.MagicFridgeAI.dto.FoodItemDTO;
+import com.github.arthurscarpin.MagicFridgeAI.exception.BusinessException;
 import com.github.arthurscarpin.MagicFridgeAI.service.FoodItemService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,30 +20,45 @@ public class FoodItemController {
     }
 
     @PostMapping
-    public ResponseEntity<FoodItem> create(@RequestBody FoodItem foodItem) {
-        FoodItem saved = service.save(foodItem);
+    public ResponseEntity<FoodItemDTO> create(@RequestBody FoodItemDTO foodItem) {
+        FoodItemDTO saved = service.save(foodItem);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @GetMapping
-    public ResponseEntity<List<FoodItem>> listAll() {
+    public ResponseEntity<List<FoodItemDTO>> listAll() {
         return ResponseEntity.ok(service.listAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FoodItem> listById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.listById(id));
+    public ResponseEntity<?> listById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(service.listById(id));
+        } catch (BusinessException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FoodItem> updateById(@PathVariable Long id, @RequestBody FoodItem foodItem) {
-        return ResponseEntity.ok(service.updateById(id, foodItem));
+    public ResponseEntity<?> updateById(@PathVariable Long id, @RequestBody FoodItemDTO foodItem) {
+        try {
+            return ResponseEntity.ok(service.updateById(id, foodItem));
+        } catch (BusinessException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<FoodItem> deleteById(@PathVariable Long id) {
-        service.deleteById(id);
-        return ResponseEntity.noContent()
-                .build();
+    public ResponseEntity<?> deleteById(@PathVariable Long id) {
+        try {
+            service.deleteById(id);
+            return ResponseEntity.noContent()
+                    .build();
+        } catch (BusinessException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        }
     }
 }
